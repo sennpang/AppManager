@@ -15,12 +15,13 @@ import {StyleSheet} from 'react-native';
 import CenterText from './CenterText';
 import {API_KEY_LENGTH} from '../constants/app';
 import {View} from 'react-native';
-import {theme} from '../App';
 import MyDivider from './MyDivider';
+import {Api, ApiList} from '..';
+import {theme} from '../config/theme';
 function ApiKeyBox({}) {
   const [allValues, setAllValues] = React.useState({
     loading: false,
-    keyList: queryAllFromRealm(ApiKeyTableName),
+    keyList: queryAllFromRealm(ApiKeyTableName) as unknown as ApiList,
   });
   const [apiKey, setApiKey] = React.useState('');
   const currentApiKeyRef = useRef({});
@@ -32,7 +33,7 @@ function ApiKeyBox({}) {
     setAllValues({...allValues, ...data});
   };
 
-  const setErrorMsg = msg => {
+  const setErrorMsg = (msg: string) => {
     setAlertInfo({msg, open: true});
     setApiKey('');
   };
@@ -52,7 +53,7 @@ function ApiKeyBox({}) {
   };
 
   const checkApiKey = () => {
-    let data = {};
+    let data: any = {};
     data[API_KEY_PARAMS] = apiKey;
     if (getFromRealm(ApiKeyTableName, apiKey)) {
       return setErrorMsg('重复值!');
@@ -78,7 +79,7 @@ function ApiKeyBox({}) {
     });
   };
 
-  const handleDelete = (e, item) => {
+  const handleDelete = (item: Api) => {
     currentApiKeyRef.current = item;
     setAlertInfo({
       ...alertInfo,
@@ -124,7 +125,7 @@ function ApiKeyBox({}) {
         <Box css={styles.apiBox}>
           <>
             {keyList.length ? (
-              keyList.map(item => {
+              keyList.map((item: Api) => {
                 return (
                   <View key={item.key}>
                     <List.Item title={item.key} description="当前 api_key" />
@@ -134,7 +135,7 @@ function ApiKeyBox({}) {
                       icon="trash-can-outline"
                       mode="contained"
                       buttonColor={theme.colors.error}
-                      onPress={e => handleDelete(e, item)}>
+                      onPress={() => handleDelete(item)}>
                       删除当前 api_key
                     </Button>
                   </View>

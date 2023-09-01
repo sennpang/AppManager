@@ -8,6 +8,9 @@ const AlertMiddle: React.FC<Props> = ({errorMsg}) => {
   // const alertInfo = useAlertStore(state => state.info);
 
   useEffect(() => {
+    if (!errorMsg) {
+      return;
+    }
     setAlertInfo({msg: errorMsg, open: true});
   }, [errorMsg, setAlertInfo]);
 

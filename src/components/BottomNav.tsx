@@ -2,7 +2,6 @@ import * as React from 'react';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ApiKeyBox from './ApiKeyBox';
-import AppDetails from './AppDetails';
 import AppList from './AppList';
 
 const Tab = createMaterialBottomTabNavigator();

@@ -1,9 +1,13 @@
 import {View, StyleSheet} from 'react-native';
 import React from 'react';
-const Box = ({children, css}) => {
+interface Props {
+  css?: React.CSSProperties | object | undefined;
+  children: React.ReactNode | React.ReactNode[];
+}
+const Box: React.FC<Props> = ({children, css}: Props) => {
   console.log(css);
   return (
-    <View style={[styles.box, {...css}]}>
+    <View style={[styles.box, css]}>
       <>{children}</>
     </View>
   );

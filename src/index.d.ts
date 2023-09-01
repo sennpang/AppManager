@@ -1,3 +1,5 @@
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+
 interface App {
   isMerged: number;
   [propName: string]: string;
@@ -30,3 +32,18 @@ interface ApiResponse {
   message: string;
   data: any;
 }
+
+export type RootStackParamList = {
+  Home: undefined;
+  AppList: undefined;
+  Details: {item: App};
+};
+
+export type DetailScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Details'
+>;
+export type AppListScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'AppList'
+>;
