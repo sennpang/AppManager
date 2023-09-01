@@ -61,7 +61,6 @@ function ApiKeyBox({}) {
 
     changeValue({loading: true});
     post(MY_APP_LIST_URL, data).then(res => {
-      console.log(res);
       if (res.code) {
         setErrorMsg(res.message);
         return false;

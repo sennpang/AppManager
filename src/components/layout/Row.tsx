@@ -16,16 +16,15 @@ interface Props {
   css?: React.CSSProperties;
 }
 const Row = (props: Props) => {
-  console.log(props.children);
   return (
     <View
       style={[
         styles.container,
         {
           flexDirection: props.direction || 'row',
-          justifyContent: props.justifyContent || 'center',
-          alignContent: props.alignContent || 'center',
-          alignItems: props.alignItems || 'center',
+          justifyContent: props.justifyContent || 'flex-start',
+          alignContent: props.alignContent || 'flex-start',
+          alignItems: props.alignItems || 'flex-start',
         },
         props.css,
       ]}>

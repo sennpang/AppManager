@@ -10,7 +10,6 @@ const AlertDialog = () => {
     setInfo({open: false});
   };
   const {open, title, msg, confirmCb, confirm} = alertInfo;
-  console.log(alertInfo);
   const handleConfirm = () => {
     confirmCb && confirmCb();
     handleClose();

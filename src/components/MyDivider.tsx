@@ -5,7 +5,6 @@ interface Props {
 }
 
 const MyDivider: React.FC<Props> = ({css}) => {
-  console.log(css);
   return <Divider style={[{marginTop: 10, marginBottom: 10}, css]} />;
 };
 

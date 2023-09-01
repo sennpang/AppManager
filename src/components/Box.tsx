@@ -5,7 +5,6 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 const Box: React.FC<Props> = ({children, css}: Props) => {
-  console.log(css);
   return (
     <View style={[styles.box, css]}>
       <>{children}</>

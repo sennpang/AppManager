@@ -16,6 +16,7 @@ import {App} from '..';
 const apiKey = queryAllFromRealm(ApiKeyTableName)[0]?.key;
 
 import {AppListScreenProps} from '..';
+import Title from './Title';
 function AppList({navigation}: AppListScreenProps) {
   const [disabledIcon, setDisabled] = useState(false);
   const [list, setList] = useState([]);
@@ -80,81 +81,45 @@ function AppList({navigation}: AppListScreenProps) {
     <>
       <AlertMiddle errorMsg={tips} />
       <ScrollView>
-        <View
-          style={{
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 10,
-            display: 'flex',
-          }}>
-          {list.length ? (
-            list.map((item: App) => {
-              let buildType =
-                item.buildType === APP_TYPE_ANDROID ? 'android' : 'apple';
-              console.log(`${PGYER_ICON_URL}/${item.buildIcon}`);
-              return (
-                <TouchableWithoutFeedback
-                  key={item.buildKey}
-                  onPress={() => {
-                    console.log(navigation);
-
-                    navigation.navigate('Details', {
-                      item,
-                    });
-                  }}>
-                  <View>
-                    <Row css={{marginBottom: 10}}>
-                      <View style={styles.appAvatar}>
-                        <Avatar.Image
-                          size={50}
-                          children={
-                            <Avatar.Icon
-                              size={20}
-                              icon={buildType}
-                              style={styles.type}
-                            />
-                          }
-                          source={{uri: `${PGYER_ICON_URL}/${item.buildIcon}`}}
-                        />
-                      </View>
-                      <View>
-                        <Row
-                          direction="column"
-                          css={{alignItems: 'self-start', marginLeft: 10}}>
-                          <Text>
-                            <Text variant="titleSmall">类型: </Text>
-                            {buildType}
-                          </Text>
-                          <Text>
-                            <Text variant="titleSmall">应用名: </Text>
-                            <Text>{item.buildName}</Text>
-                          </Text>
-                          <Text>
-                            <Text variant="titleSmall">创建时间: </Text>
-                            <Text>{item.buildCreated}</Text>
-                          </Text>
-                          <Text>
-                            <Text variant="titleSmall">版本: </Text>
-                            <Text>{item.buildVersion}</Text>
-                          </Text>
-                          <Text>
-                            <Text variant="titleSmall">包名: </Text>
-                            <Text>{item.buildIdentifier.substr(0, 20)}</Text>
-                          </Text>
-                        </Row>
-                      </View>
-                    </Row>
+        {!!list.length &&
+          list.map((item: App) => {
+            let buildType =
+              item.buildType === APP_TYPE_ANDROID ? 'android' : 'apple';
+            return (
+              <TouchableWithoutFeedback
+                key={item.buildKey}
+                onPress={() => {
+                  navigation.navigate('Details', {
+                    item,
+                  });
+                }}>
+                <Row
+                  css={{marginBottom: 25, paddingLeft: '10%'}}
+                  alignItems="center">
+                  <View style={styles.appAvatar}>
+                    <Avatar.Image
+                      size={50}
+                      source={{uri: `${PGYER_ICON_URL}/${item.buildIcon}`}}
+                    />
+                    <Avatar.Icon
+                      size={20}
+                      icon={buildType.toLowerCase()}
+                      style={styles.type}
+                    />
                   </View>
-                </TouchableWithoutFeedback>
-              );
-            })
-          ) : (
-            <></>
-          )}
-        </View>
+                  <View style={{marginLeft: 10}}>
+                    <Row css={{marginBottom: 5}} justifyContent="flex-start">
+                      <Title marginBottom={0}>{item.buildName}</Title>
+                      <Text style={{marginLeft: 5}}>{item.buildVersion}</Text>
+                    </Row>
+                    <Text>{item.buildCreated}</Text>
+                  </View>
+                </Row>
+              </TouchableWithoutFeedback>
+            );
+          })}
       </ScrollView>
-      <Row>
+      <Row justifyContent="center">
         <IconButton
           icon="arrow-left"
           onPress={() => getAppList('left')}

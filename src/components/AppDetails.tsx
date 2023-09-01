@@ -13,8 +13,7 @@ import Row from './layout/Row';
 import {DetailScreenProps} from '..';
 import VStack from './layout/VStack';
 import Title from './Title';
-const AppDetails = ({route, navigation}: DetailScreenProps) => {
-  console.log(route, navigation);
+const AppDetails = ({route}: DetailScreenProps) => {
   const {item} = route.params;
   let screenshots: string[] = [];
   if (item?.buildScreenshots) {
@@ -25,11 +24,11 @@ const AppDetails = ({route, navigation}: DetailScreenProps) => {
     <ScrollView>
       <View>
         <Box>
-          <Row justifyContent="flex-start">
+          <VStack>
             <Title>名称: </Title>
             <Text>{item.buildName}</Text>
-          </Row>
-          <Row justifyContent="flex-start">
+          </VStack>
+          <VStack>
             <Title>安装地址: </Title>
             <TouchableWithoutFeedback
               onPress={() => {
@@ -37,37 +36,42 @@ const AppDetails = ({route, navigation}: DetailScreenProps) => {
               }}>
               <Text>{appUrl}</Text>
             </TouchableWithoutFeedback>
-          </Row>
-          <Row justifyContent="flex-start">
+          </VStack>
+          <VStack>
             <Title>大小: </Title>
             <Text>{item.buildFileSize}</Text>
-          </Row>
-          <Row justifyContent="flex-start">
+          </VStack>
+          <VStack>
             <Title>包名: </Title>
             <Text>{item.buildIdentifier}</Text>
-          </Row>
+          </VStack>
           <Row direction="column" alignItems="flex-start">
             <Title>应用描述: </Title>
             <Text>{item.buildDescription || ' '}</Text>
           </Row>
-          <Row justifyContent="flex-start">
+          <VStack>
             <Title>合并应用: </Title>
             <Text>{item.isMerged === 1 ? '是' : '否'}</Text>
-          </Row>
-          <Row justifyContent="flex-start">
+          </VStack>
+          <VStack>
             <Title>安装密码: </Title>
             <Text>{item.buildPassword}</Text>
-          </Row>
-          <Row justifyContent="flex-start" alignContent="flex-start">
-            <Title>截图: </Title>
-          </Row>
+          </VStack>
           <VStack>
+            <Title>截图: </Title>
+          </VStack>
+          <VStack alignItems="center" justifyContent="center">
             {!!screenshots.length &&
               screenshots.map((img: string, index: number) => {
                 return (
                   <Image
                     key={index}
-                    style={{width: 500, height: 400, resizeMode: 'contain'}}
+                    style={{
+                      width: 500,
+                      height: 400,
+                      marginBottom: 10,
+                      resizeMode: 'contain',
+                    }}
                     source={{
                       uri: `${PGYER_SCREENSHOT_URL}/${img}`,
                     }}

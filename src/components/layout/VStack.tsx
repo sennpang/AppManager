@@ -1,20 +1,32 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {FlexAlignType, StyleSheet, View} from 'react-native';
 interface Props {
-  children: React.ReactNode | undefined;
+  children: React.ReactNode;
   direction?: 'column' | 'row';
-  css?: React.CSSProperties;
+  alignItems?: FlexAlignType | unknown;
+  justifyContent?:
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly'
+    | unknown;
+  marginBottom?: number;
+  alignContent?: FlexAlignType | 'space-between' | 'space-around';
+  css?: React.CSSProperties | any;
 }
 const VStack = (props: Props) => {
-  console.log(props.children);
   return (
     <View
       style={[
         styles.container,
         {
-          flexDirection: props.direction || 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: props.justifyContent || 'flex-start',
+          alignContent: props.alignContent || 'flex-start',
+          alignItems: props.alignItems || 'flex-start',
+          marginBottom:
+            props.marginBottom !== undefined ? props.marginBottom : 10,
         },
         props.css,
       ]}>
