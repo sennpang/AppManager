@@ -18,6 +18,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {theme} from './config/theme';
 import {RootStackParamList} from '.';
+import VersionList from './components/VersionList';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -39,6 +40,7 @@ function App(): JSX.Element {
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Home" component={BottomNav} />
             <Stack.Screen name="Details" component={AppDetails} />
+            <Stack.Screen name="VersionList" component={VersionList} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

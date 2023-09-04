@@ -35,10 +35,18 @@ interface ApiResponse {
 
 export type RootStackParamList = {
   Home: undefined;
-  AppList: undefined;
+  AppList: undefined | object;
   Details: {item: App};
+  VersionList: {
+    appKey: string;
+    appName: string;
+  };
 };
 
+export type VersionScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'VersionList'
+>;
 export type DetailScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Details'
