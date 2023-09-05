@@ -18,7 +18,14 @@ const AlertDialog = () => {
   return (
     <View>
       <Portal>
-        <Dialog visible={!!open} onDismiss={handleClose}>
+        <Dialog
+          visible={!!open}
+          onDismiss={handleClose}
+          theme={{
+            colors: {
+              backdrop: 'rgba(255, 255, 255, 0.2)',
+            },
+          }}>
           <Dialog.Title>{title || '提示'}</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">{msg}</Text>

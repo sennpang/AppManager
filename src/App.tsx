@@ -6,7 +6,7 @@ import {
   StatusBar,
   ViewStyle,
 } from 'react-native';
-import {PaperProvider} from 'react-native-paper';
+import {ActivityIndicator, PaperProvider} from 'react-native-paper';
 
 import {name as appName} from '../app.json';
 import AlertDialog from './components/AlertDialog';
@@ -19,6 +19,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {theme} from './config/theme';
 import {RootStackParamList} from '.';
 import VersionList from './components/VersionList';
+import {useLoadingStore} from './store/loading';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -27,6 +28,7 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     height: '100%',
   };
+  const loading = useLoadingStore(state => state.loading);
 
   return (
     <PaperProvider theme={theme}>
@@ -36,6 +38,7 @@ function App(): JSX.Element {
           backgroundColor={safeAreaBg.backgroundColor}
         />
         <AlertDialog />
+        {loading && <ActivityIndicator animating={true} />}
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Home" component={BottomNav} />

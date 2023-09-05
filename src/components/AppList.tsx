@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ScrollView, TouchableWithoutFeedback, View} from 'react-native';
 import {post} from '../helper/fetch';
 import {
@@ -11,70 +11,86 @@ import {Avatar, IconButton, Text} from 'react-native-paper';
 import AlertMiddle from './AlertMiddle';
 import Row from './layout/Row';
 import {StyleSheet} from 'react-native';
-import {App} from '..';
-import {AppListScreenProps} from '..';
+import {App, AppListScreenProps} from '..';
 import Title from './Title';
 import AppMenu from './AppMenu';
 import {apiKey} from '../helper/common';
+import {useLoadingStore} from '../store/loading';
 function AppList({navigation}: AppListScreenProps) {
   const [disabledIcon, setDisabled] = useState(false);
   const [list, setList] = useState([]);
   const [tips, setTips] = useState('');
   const currentPage = useRef(1);
   const currentPageCount = useRef(1);
+  const setLoading = useLoadingStore(state => state.setStat);
+
+  const getAppList = useCallback(
+    (direction?: 'left' | 'right') => {
+      if (!setLoading) {
+        return;
+      }
+
+      // if (apiKey) return;
+      if (!apiKey) {
+        setTips('请先添加 api_key');
+        return;
+      }
+
+      switch (direction) {
+        case 'left':
+          currentPage.current--;
+          break;
+        case 'right':
+          currentPage.current++;
+          break;
+
+        default:
+          break;
+      }
+
+      if (currentPage.current < 0) {
+        currentPage.current = 0;
+      }
+
+      if (
+        currentPageCount.current &&
+        currentPage.current > currentPageCount.current
+      ) {
+        currentPage.current = currentPageCount.current;
+      }
+
+      setLoading(true);
+      let data: any = {};
+      data[API_KEY_PARAMS] = apiKey;
+      data.page = currentPage.current || 1;
+      setDisabled(true);
+      post(MY_APP_LIST_URL, data).then(res => {
+        let code = res.code;
+        if (code) {
+          setTips(res.message);
+          return false;
+        } else {
+          if (!res.data.list.length) {
+            return setTimeout(() => {
+              getAppList('left');
+            }, 0);
+          }
+          setList(res.data.list);
+          currentPageCount.current = res.data.pageCount;
+        }
+        setDisabled(false);
+        setLoading(false);
+      });
+    },
+    [setLoading],
+  );
+
   useEffect(() => {
     if (!apiKey) {
       return;
     }
     getAppList();
-  }, []);
-
-  const getAppList = (direction = '') => {
-    // if (apiKey) return;
-    if (!apiKey) {
-      setTips('请先添加 api_key');
-      return;
-    }
-
-    switch (direction) {
-      case 'left':
-        currentPage.current--;
-        break;
-      case 'right':
-        currentPage.current++;
-        break;
-
-      default:
-        break;
-    }
-
-    if (currentPage.current < 0) {
-      currentPage.current = 0;
-    }
-
-    if (
-      currentPageCount.current &&
-      currentPage.current > currentPageCount.current
-    ) {
-      currentPage.current = currentPageCount.current;
-    }
-
-    let data: any = {};
-    data[API_KEY_PARAMS] = apiKey;
-    data.page = currentPage.current || 1;
-    setDisabled(true);
-    post(MY_APP_LIST_URL, data).then(res => {
-      let code = res.code;
-      if (code) {
-        setTips(res.message);
-        return false;
-      } else {
-        setList(res.data.list);
-        currentPageCount.current = res.data.pageCount;
-      }
-      setDisabled(false);
-    });
-  };
+  }, [getAppList]);
 
   return (
     <>
@@ -88,7 +104,6 @@ function AppList({navigation}: AppListScreenProps) {
               <TouchableWithoutFeedback
                 key={item.buildKey}
                 onPress={() => {
-                  console.log('click');
                   navigation.navigate('Details', {
                     item,
                   });
@@ -125,6 +140,7 @@ function AppList({navigation}: AppListScreenProps) {
                     </Row>
                     <Row alignItems="center">
                       <AppMenu
+                        getAppList={getAppList}
                         appName={item.buildName}
                         appKey={item.appKey}
                         navigation={navigation}

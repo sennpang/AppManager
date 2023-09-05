@@ -1,7 +1,14 @@
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {BottomNavigationProps} from 'react-native-paper';
+import {
+  NavigationHelpers,
+  ParamListBase,
+  TabNavigationState,
+} from '@react-navigation/native';
+import {BottomTabDescriptorMap} from '@react-navigation/bottom-tabs/lib/typescript/src/types';
 
 interface App {
   isMerged: number;
+  buildKey: string;
   [propName: string]: string;
 }
 interface Css {
@@ -34,24 +41,34 @@ interface ApiResponse {
 }
 
 export type RootStackParamList = {
-  Home: undefined;
-  AppList: undefined | object;
-  Details: {item: App};
+  Home: {};
+  AppList: {};
+  Details: {item: App | any};
   VersionList: {
     appKey: string;
     appName: string;
   };
 };
 
-export type VersionScreenProps = NativeStackScreenProps<
+export type VersionScreenProps = BottomNavigationProps<
   RootStackParamList,
   'VersionList'
 >;
-export type DetailScreenProps = NativeStackScreenProps<
+export type DetailScreenProps = BottomNavigationProps<
   RootStackParamList,
   'Details'
 >;
-export type AppListScreenProps = NativeStackScreenProps<
+export type AppListScreenProps = BottomNavigationProps<
   RootStackParamList,
   'AppList'
 >;
+export type NavigationProp = NavigationHelpers<
+  ParamListBase,
+  BottomTabNavigationEventMap
+> &
+  any;
+export interface TabBarProps {
+  state: TabNavigationState<ParamListBase>;
+  descriptors: BottomTabDescriptorMap & any;
+  navigation: NavigationProp;
+}
