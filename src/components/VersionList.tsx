@@ -6,15 +6,16 @@ import {
   APP_CANCEL_LATEST_VERSION_URL,
   APP_KEY_PARAMS,
   APP_LATEST_VERSION_URL,
+  APP_VERSION_DELETE_URL,
   APP_VERSION_LIST_URL,
   BUILD_KEY_PARAMS,
   PGYER_ICON_URL,
 } from '../constants/api.url';
-import {Avatar, Checkbox, IconButton, Text} from 'react-native-paper';
+import {Avatar, Button, Checkbox, IconButton, Text} from 'react-native-paper';
 import AlertMiddle from './AlertMiddle';
 import Row from './layout/Row';
 import {StyleSheet} from 'react-native';
-import {App, VersionScreenProps} from '..';
+import {App, AppList, VersionScreenProps} from '..';
 
 import Title from './Title';
 import VersionMenu from './VersionMenu';
@@ -22,16 +23,21 @@ import {apiKey} from '../helper/common';
 import {GLOBAL_FALSE, GLOBAL_TRUE} from '../constants/app';
 import {theme} from '../config/theme';
 import {useLoadingStore} from '../store/loading';
+import {useAlertStore} from '../store/alert';
 function VersionList({navigation, route}: VersionScreenProps) {
   const {appKey, appName} = route.params;
   const [disabledIcon, setDisabled] = useState(false);
-  const [list, setList] = useState([]);
+  const [list, setList] = useState({});
   const [tips, setTips] = useState('');
+  const [selectApp, setSelectApp] = useState(new Set());
   const [selectAll, setSelectAll] = React.useState(false);
   const currentPage = useRef(1);
   const currentPageCount = useRef(1);
 
   const setLoading = useLoadingStore(state => state.setStat);
+  const setAlertInfo = useAlertStore(state => state.setInfo);
+  const alertInfo = useAlertStore(state => state.info);
+
   const getAppList = useCallback(
     (direction?: 'left' | 'right') => {
       if (!setLoading) {
@@ -78,15 +84,26 @@ function VersionList({navigation, route}: VersionScreenProps) {
           setTips(res.message);
           return false;
         } else {
-          setList(res.data.list);
+          if (!res.data.list.length) {
+            return navigation.push('AppList');
+          }
+          dealList(res.data.list);
           currentPageCount.current = res.data.pageCount;
         }
         setDisabled(false);
         setLoading(false);
       });
     },
-    [appKey, setLoading],
+    [appKey, navigation, setLoading],
   );
+
+  const dealList = (orgList: AppList) => {
+    let tmp: any = {};
+    orgList.map((item: App) => {
+      tmp[item.buildKey] = item;
+    });
+    setList(tmp);
+  };
 
   useEffect(() => {
     if (!appKey) {
@@ -121,6 +138,74 @@ function VersionList({navigation, route}: VersionScreenProps) {
     });
   };
 
+  const checkedApp = (buildKey: string | number) => {
+    if (!selectApp.has(buildKey)) {
+      setSelectApp(keys => keys.add(buildKey));
+    } else {
+      setSelectApp(keys => {
+        keys.delete(buildKey);
+        return keys;
+      });
+    }
+
+    if (selectApp.size === Object.keys(list).length) {
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
+    }
+    rebuildList();
+  };
+
+  const rebuildList = () => {
+    let tmp: any = {...list};
+    selectApp.forEach((k: any) => {
+      tmp[k].checked = true;
+    });
+    setList(tmp);
+  };
+
+  useEffect(() => {}, [selectAll]);
+
+  const deleteVersions = () => {
+    setDisabled(true);
+    selectApp.forEach(buildKey => {
+      post(APP_VERSION_DELETE_URL, {_api_key: apiKey, buildKey}).then(res => {
+        let code = res.code;
+        if (code) {
+          setAlertInfo({msg: res.message, open: true});
+          return false;
+        }
+        setDisabled(false);
+      });
+    });
+    setTimeout(() => {
+      setAlertInfo({msg: '删除成功', open: true});
+      setTimeout(() => {
+        getAppList();
+      }, 1000);
+    }, 0);
+  };
+
+  const handleDeleteVersions = () => {
+    if (!selectApp.size) {
+      return setAlertInfo({msg: '参数错误', open: true});
+    }
+
+    setAlertInfo({
+      ...alertInfo,
+      confirmCb: () => deleteVersions(),
+      cancelCb: () => cancelSelect(),
+      confirm: '确认',
+      msg: '确认删除?',
+      open: true,
+    });
+  };
+
+  const cancelSelect = () => {
+    setSelectApp(new Set());
+    setSelectAll(false);
+  };
+
   return (
     <>
       <AlertMiddle errorMsg={tips} />
@@ -130,20 +215,36 @@ function VersionList({navigation, route}: VersionScreenProps) {
         css={{marginBottom: 1, marginTop: 10}}>
         {appName}
       </Title>
+      <Row css={{paddingLeft: '1%'}} alignItems="center">
+        <Checkbox
+          status={selectAll ? 'checked' : 'unchecked'}
+          onPress={() => {
+            if (!selectAll) {
+              Object.keys(list).map(k => {
+                setSelectApp(key => key.add(k));
+              });
+            } else {
+              setSelectApp(new Set());
+            }
+            setSelectAll(!selectAll);
+            rebuildList();
+          }}
+        />
+        <Button
+          mode="text"
+          disabled={!selectApp.size || disabledIcon}
+          textColor={theme.colors.error}
+          onPress={() => handleDeleteVersions()}>
+          删除
+        </Button>
+      </Row>
       <ScrollView>
-        <Row css={{paddingLeft: '1%'}} alignItems="center">
-          <Checkbox
-            status={selectAll ? 'checked' : 'unchecked'}
-            onPress={() => {
-              setSelectAll(!selectAll);
-            }}
-          />
-        </Row>
-        {!!list.length &&
-          list.map((item: App) => {
-            const checked = item.checked;
+        {!!Object.keys(list).length &&
+          Object.values(list).map((item: any) => {
+            const checked = selectApp.has(item.buildKey);
+            const buildKey = item.buildKey;
             return (
-              <View key={item.buildKey}>
+              <View key={buildKey}>
                 <Row
                   css={{
                     marginBottom: 25,
@@ -154,6 +255,9 @@ function VersionList({navigation, route}: VersionScreenProps) {
                   <Row alignItems="center">
                     <Checkbox
                       status={checked || selectAll ? 'checked' : 'unchecked'}
+                      onPress={() => {
+                        checkedApp(buildKey);
+                      }}
                     />
                     <View style={styles.appAvatar}>
                       <Avatar.Image

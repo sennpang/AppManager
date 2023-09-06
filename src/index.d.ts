@@ -16,6 +16,7 @@ interface Css {
 }
 
 interface AppList {
+  map(arg0: (item: App) => void): unknown;
   [index: number]: App;
 }
 

@@ -9,7 +9,7 @@ const AlertDialog = () => {
   const handleClose = () => {
     setInfo({open: false});
   };
-  const {open, title, msg, confirmCb, confirm} = alertInfo;
+  const {open, title, msg, confirmCb, confirm, cancelCb} = alertInfo;
   const handleConfirm = () => {
     confirmCb && confirmCb();
     handleClose();
@@ -31,7 +31,15 @@ const AlertDialog = () => {
             <Text variant="bodyMedium">{msg}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            {confirmCb && <Button onPress={handleClose}>取消</Button>}
+            {confirmCb && (
+              <Button
+                onPress={() => {
+                  handleClose();
+                  cancelCb && cancelCb();
+                }}>
+                取消
+              </Button>
+            )}
             <Button onPress={handleConfirm}>{confirm || '好的'}</Button>
           </Dialog.Actions>
         </Dialog>

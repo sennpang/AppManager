@@ -6,7 +6,7 @@ interface Alert {
   open?: boolean;
   confirm?: string;
   confirmCb?: (p?: any) => void;
-  cancleCb?: (p?: any) => void;
+  cancelCb?: (p?: any) => void;
 }
 export interface AlertState {
   info: Alert;
