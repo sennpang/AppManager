@@ -23,8 +23,6 @@ function ListContainer({
   type,
   route,
 }: VersionScreenProps & {type: 'version' | 'app'}) {
-  console.log(type);
-
   const [disabledIcon, setDisabled] = useState(false);
   const [list, setList] = useState({});
   const [tips, setTips] = useState('');
@@ -130,7 +128,6 @@ function ListContainer({
 
   const rebuildList = () => {
     let tmp: any = {...list};
-    console.log(selectedApps, tmp);
     selectedApps.forEach((k: any) => {
       tmp[k].checked = true;
     });
