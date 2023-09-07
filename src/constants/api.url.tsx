@@ -1,9 +1,11 @@
-export const MY_APP_LIST_URL = 'app/listMy';
-export const APP_VERSION_LIST_URL = 'app/builds';
-export const APP_DELETE_URL = 'app/deleteApp';
-export const APP_VERSION_DELETE_URL = 'app/buildDelete';
-export const APP_LATEST_VERSION_URL = 'app/setNewestVersion';
-export const APP_CANCEL_LATEST_VERSION_URL = 'app/cancelNewestVersion';
+export const API_URL_MAP = {
+  MY_APP_LIST_URL: 'app/listMy',
+  APP_VERSION_LIST_URL: 'app/builds',
+  APP_DELETE_URL: 'app/deleteApp',
+  APP_VERSION_DELETE_URL: 'app/buildDelete',
+  APP_SET_LATEST_VERSION_URL: 'app/setNewestVersion',
+  APP_CANCEL_LATEST_VERSION_URL: 'app/cancelNewestVersion',
+};
 export const API_KEY_PARAMS = '_api_key';
 export const APP_KEY_PARAMS = 'appKey';
 export const BUILD_KEY_PARAMS = 'buildKey';

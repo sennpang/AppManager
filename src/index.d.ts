@@ -1,3 +1,4 @@
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomNavigationProps} from 'react-native-paper';
 import {
   NavigationHelpers,
@@ -5,11 +6,22 @@ import {
   TabNavigationState,
 } from '@react-navigation/native';
 import {BottomTabDescriptorMap} from '@react-navigation/bottom-tabs/lib/typescript/src/types';
+import {CompositeNavigationProp} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 interface App {
   isMerged: number;
+  appName: string;
   buildKey: string;
+  appKey: string;
   [propName: string]: string;
+}
+interface PostData {
+  _api_key: string;
+  buildKey?: string;
+  appKey?: string;
+  [propName: string]: string | number | boolean;
 }
 interface Css {
   [propName: string]: string | number;
@@ -38,38 +50,49 @@ interface State {
 interface ApiResponse {
   code: number;
   message: string;
-  data: any;
+  data: {};
 }
 
 export type RootStackParamList = {
-  Home: {};
-  AppList: {};
-  Details: {item: App | any};
+  AppList: undefined;
+  Details: {item: App};
   VersionList: {
     appKey: string;
     appName: string;
   };
 };
 
-export type VersionScreenProps = BottomNavigationProps<
+export type RootStackParamList = {
+  ApiBox: undefined;
+  Details: {item: App};
+};
+
+export type VersionScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'VersionList'
 >;
+
 export type DetailScreenProps = BottomNavigationProps<
   RootStackParamList,
   'Details'
 >;
+
 export type AppListScreenProps = BottomNavigationProps<
   RootStackParamList,
   'AppList'
 >;
+
+export type HomeScreenProp = CompositeNavigationProp<
+  StackNavigationProp<RootStackParamList, 'AppList'>,
+  BottomTabNavigationProp<MainBottomTabParamList, 'Home'>
+>;
+
 export type NavigationProp = NavigationHelpers<
   ParamListBase,
   BottomTabNavigationEventMap
-> &
-  any;
+>;
 export interface TabBarProps {
   state: TabNavigationState<ParamListBase>;
-  descriptors: BottomTabDescriptorMap & any;
+  descriptors: BottomTabDescriptorMap;
   navigation: NavigationProp;
 }

@@ -1,29 +1,32 @@
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {Menu, Divider, IconButton} from 'react-native-paper';
+import {App} from '..';
 import {theme} from '../config/theme';
-import {APP_DELETE_URL} from '../constants/api.url';
+import {API_URL_MAP} from '../constants/api.url';
 import {apiKey} from '../helper/common';
 import {post} from '../helper/fetch';
 import {useAlertStore} from '../store/alert';
 import AlertDialog from './AlertDialog';
 interface Props {
-  navigation: any;
-  appKey: string;
+  item: App;
   getAppList: () => void;
-  appName: string;
 }
 
-const AppMenu = ({navigation, appKey, appName, getAppList}: Props) => {
+const AppMenu = ({item, getAppList}: Props) => {
+  const {appKey, appName} = item;
   const [visible, setVisible] = React.useState(false);
   const [disabled, setDisabled] = React.useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
   const setAlertInfo = useAlertStore(state => state.setInfo);
   const alertInfo = useAlertStore(state => state.info);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const deleteApp = () => {
     setDisabled(true);
-    post(APP_DELETE_URL, {_api_key: apiKey, appKey}).then(res => {
+    post(API_URL_MAP.APP_DELETE_URL, {_api_key: apiKey, appKey}).then(res => {
       let code = res.code;
       if (code) {
         setAlertInfo({msg: res.message, open: true});
@@ -68,10 +71,20 @@ const AppMenu = ({navigation, appKey, appName, getAppList}: Props) => {
           />
         }>
         <Menu.Item
+          leadingIcon="details"
+          onPress={() => {
+            closeMenu();
+            navigation.push('Details', {
+              item,
+            });
+          }}
+          title="详情"
+        />
+        <Menu.Item
           leadingIcon={'format-list-bulleted'}
           onPress={() => {
             closeMenu();
-            navigation.navigate('VersionList', {
+            navigation.push('VersionList', {
               appKey,
               appName,
             });

@@ -1,19 +1,13 @@
 import * as React from 'react';
-// import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ApiKeyBox from './ApiKeyBox';
 import AppList from './AppList';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import AppDetails from './AppDetails';
 import Row from './layout/Row';
-import VersionList from './VersionList';
 import {TabBarProps} from '..';
 
-// const Tab = createMaterialBottomTabNavigator();
-
 const Tab = createBottomTabNavigator();
-const filterTab = ['Details', 'VersionList'];
 function MyTabBar({state, descriptors, navigation}: TabBarProps) {
   return (
     <View
@@ -35,9 +29,6 @@ function MyTabBar({state, descriptors, navigation}: TabBarProps) {
               ? options.title
               : route.name;
 
-          if (filterTab.includes(label)) {
-            return false;
-          }
           const isFocused = state.index === index;
 
           const onPress = () => {
@@ -112,20 +103,6 @@ function BottomNav() {
               size={26}
             />
           ),
-        }}
-      />
-      <Tab.Screen
-        name="Details"
-        component={AppDetails}
-        options={{
-          tabBarLabel: 'Details',
-        }}
-      />
-      <Tab.Screen
-        name="VersionList"
-        component={VersionList}
-        options={{
-          tabBarLabel: 'VersionList',
         }}
       />
     </Tab.Navigator>
