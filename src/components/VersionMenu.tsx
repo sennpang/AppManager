@@ -20,7 +20,6 @@ interface Props {
   item: App;
 }
 const VersionMenu = (props: Props) => {
-  const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
   const {buildKey, getAppList, item} = props;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [visible, setVisible] = React.useState(false);
@@ -33,6 +32,7 @@ const VersionMenu = (props: Props) => {
   const alertInfo = useAlertStore(state => state.info);
 
   const deleteApp = () => {
+    const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
     const postData: PostData = {_api_key: apiKey, buildKey};
     setDisabled(true);
     post(API_URL_MAP.APP_VERSION_DELETE_URL, postData).then(res => {
@@ -73,6 +73,7 @@ const VersionMenu = (props: Props) => {
 
     setLoading(false);
     let data: any = {};
+    const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
     data[API_KEY_PARAMS] = apiKey;
     data[BUILD_KEY_PARAMS] = buildKey;
     const url = cancel

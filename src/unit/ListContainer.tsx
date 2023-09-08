@@ -17,16 +17,30 @@ import AlertMiddle from '../components/AlertMiddle';
 import Row from '../components/layout/Row';
 import AppScrollView from './AppScrollView';
 import {queryAllFromRealm, ApiKeyTableName} from '../utils/RealmUtil';
+const rebuildList = (list: any, selectedApps: any) => {
+  let tmp: any = {...list};
+  selectedApps.forEach((k: any) => {
+    tmp[k].checked = true;
+  });
+  return tmp;
+};
 
+const dealList = (orgList: AppList, indexKey: string) => {
+  let tmp: any = {};
+  orgList.map((item: App) => {
+    tmp[item[indexKey]] = item;
+  });
+  return tmp;
+};
 function ListContainer({
   navigation,
   type,
   route,
 }: VersionScreenProps & {type: 'version' | 'app'}) {
-  const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
   const [disabledIcon, setDisabled] = useState(false);
   const [list, setList] = useState({});
   const [tips, setTips] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const [selectedApps, setSelectApp] = useState(new Set());
   const [selectAll, setSelectAll] = React.useState(false);
   const currentPage = useRef(1);
@@ -36,10 +50,18 @@ function ListContainer({
   const setAlertInfo = useAlertStore(state => state.setInfo);
   const alertInfo = useAlertStore(state => state.info);
 
+  useEffect(() => {
+    const key: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
+    setApiKey(key);
+  }, [route.params.time]);
+
   const getAppList = useCallback(
     (direction?: 'left' | 'right') => {
+      if (!route.params.time) {
+        return;
+      }
+
       if (!apiKey) {
-        setTips('请先添加 apiKey');
         return;
       }
 
@@ -99,30 +121,29 @@ function ListContainer({
         } else {
           if (!res.data.list.length) {
             if (type === 'version') {
-              return navigation.push('AppList');
+              return navigation.push('AppList', {time: Date.now()});
             } else {
               return;
             }
           }
-          dealList(res.data.list);
+          const indexKey =
+            type === 'version' ? BUILD_KEY_PARAMS : APP_KEY_PARAMS;
+          setList(dealList(res.data.list, indexKey));
           currentPageCount.current = res.data.pageCount;
         }
         setDisabled(false);
         setLoading(false);
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [navigation, route?.params?.appKey, setLoading, type],
+    [
+      apiKey,
+      route.params.time,
+      route.params.appKey,
+      setLoading,
+      type,
+      navigation,
+    ],
   );
-
-  const indexKey = type === 'version' ? BUILD_KEY_PARAMS : APP_KEY_PARAMS;
-  const dealList = (orgList: AppList) => {
-    let tmp: any = {};
-    orgList.map((item: App) => {
-      tmp[item[indexKey]] = item;
-    });
-    setList(tmp);
-  };
 
   useEffect(() => {
     if (type === 'version' && !route?.params?.appKey) {
@@ -131,14 +152,6 @@ function ListContainer({
 
     getAppList();
   }, [getAppList, route?.params?.appKey, type]);
-
-  const rebuildList = () => {
-    let tmp: any = {...list};
-    selectedApps.forEach((k: any) => {
-      tmp[k].checked = true;
-    });
-    setList(tmp);
-  };
 
   const deleteVersions = () => {
     let postUrl: string = '';
@@ -215,7 +228,7 @@ function ListContainer({
       setSelectApp(new Set());
     }
     setSelectAll(!selectAll);
-    rebuildList();
+    setList(rebuildList(list, selectedApps));
   };
 
   const checkedApp = (buildKey: string) => {
@@ -233,7 +246,7 @@ function ListContainer({
     } else {
       setSelectAll(false);
     }
-    rebuildList();
+    setList(rebuildList(list, selectedApps));
   };
 
   const newProps = {

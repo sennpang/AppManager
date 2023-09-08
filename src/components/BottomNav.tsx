@@ -38,7 +38,7 @@ function MyTabBar({state, descriptors, navigation}: TabBarProps) {
             });
 
             if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
+              navigation.navigate(route.name, {time: Date.now()});
             }
           };
 

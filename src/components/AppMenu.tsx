@@ -15,7 +15,6 @@ interface Props {
 }
 
 const AppMenu = ({item, getAppList}: Props) => {
-  const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
   const {appKey, appName} = item;
   const [visible, setVisible] = React.useState(false);
   const [disabled, setDisabled] = React.useState(false);
@@ -27,6 +26,7 @@ const AppMenu = ({item, getAppList}: Props) => {
 
   const deleteApp = () => {
     setDisabled(true);
+    const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
     post(API_URL_MAP.APP_DELETE_URL, {_api_key: apiKey, appKey}).then(res => {
       let code = res.code;
       if (code) {
@@ -88,6 +88,7 @@ const AppMenu = ({item, getAppList}: Props) => {
             navigation.push('VersionList', {
               appKey,
               appName,
+              time: Date.now(),
             });
           }}
           title="版本列表"
