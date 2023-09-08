@@ -8,7 +8,6 @@ import {
 import {IconButton} from 'react-native-paper';
 import {App, AppList, PostData, VersionScreenProps} from '..';
 
-import {apiKey} from '../helper/common';
 import {useLoadingStore} from '../store/loading';
 import {useAlertStore} from '../store/alert';
 import DeleteAppBtn from '../unit/DeleteAppBtn';
@@ -17,12 +16,14 @@ import Title from '../components/Title';
 import AlertMiddle from '../components/AlertMiddle';
 import Row from '../components/layout/Row';
 import AppScrollView from './AppScrollView';
+import {queryAllFromRealm, ApiKeyTableName} from '../utils/RealmUtil';
 
 function ListContainer({
   navigation,
   type,
   route,
 }: VersionScreenProps & {type: 'version' | 'app'}) {
+  const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
   const [disabledIcon, setDisabled] = useState(false);
   const [list, setList] = useState({});
   const [tips, setTips] = useState('');
@@ -37,6 +38,11 @@ function ListContainer({
 
   const getAppList = useCallback(
     (direction?: 'left' | 'right') => {
+      if (!apiKey) {
+        setTips('请先添加 apiKey');
+        return;
+      }
+
       if (!setLoading) {
         return;
       }
@@ -237,46 +243,53 @@ function ListContainer({
     checkedApp: checkedApp,
     selectAll: selectAll,
   };
+
   return (
     <>
-      <AlertMiddle errorMsg={tips} />
-      {type === 'version' && (
-        <Title
-          textAlign="center"
-          fontSize={18}
-          css={{marginBottom: 1, marginTop: 10}}>
-          {route.params.appName}
-        </Title>
+      {apiKey ? (
+        <>
+          <AlertMiddle errorMsg={tips} />
+          {type === 'version' && (
+            <Title
+              textAlign="center"
+              fontSize={18}
+              css={{marginBottom: 1, marginTop: 10}}>
+              {route.params.appName}
+            </Title>
+          )}
+
+          <DeleteAppBtn
+            selectedApps={selectedApps}
+            disabled={disabledIcon}
+            selectAll={selectAll}
+            changeSelectAll={changeSelectAll}
+            handleDelete={handleDeleteVersions}
+          />
+
+          {type === 'version' && <VersionScrollView {...newProps} />}
+          {type === 'app' && <AppScrollView {...newProps} />}
+
+          <Row justifyContent="center">
+            <IconButton
+              icon="arrow-left"
+              onPress={() => getAppList('left')}
+              disabled={disabledIcon || currentPage.current === 1}
+            />
+            <IconButton
+              icon="arrow-right"
+              rippleColor=""
+              onPress={() => getAppList('right')}
+              disabled={
+                disabledIcon ||
+                currentPageCount.current === currentPage.current ||
+                currentPageCount.current === 1
+              }
+            />
+          </Row>
+        </>
+      ) : (
+        <Title textAlign="center">请先添加 _api_key</Title>
       )}
-
-      <DeleteAppBtn
-        selectedApps={selectedApps}
-        disabled={disabledIcon}
-        selectAll={selectAll}
-        changeSelectAll={changeSelectAll}
-        handleDelete={handleDeleteVersions}
-      />
-
-      {type === 'version' && <VersionScrollView {...newProps} />}
-      {type === 'app' && <AppScrollView {...newProps} />}
-
-      <Row justifyContent="center">
-        <IconButton
-          icon="arrow-left"
-          onPress={() => getAppList('left')}
-          disabled={disabledIcon || currentPage.current === 1}
-        />
-        <IconButton
-          icon="arrow-right"
-          rippleColor=""
-          onPress={() => getAppList('right')}
-          disabled={
-            disabledIcon ||
-            currentPageCount.current === currentPage.current ||
-            currentPageCount.current === 1
-          }
-        />
-      </Row>
     </>
   );
 }

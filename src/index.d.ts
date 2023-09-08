@@ -54,6 +54,7 @@ interface ApiResponse {
 }
 
 export type RootStackParamList = {
+  ApiBox: undefined;
   AppList: undefined;
   Details: {item: App};
   VersionList: {

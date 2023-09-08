@@ -9,10 +9,10 @@ import {
   API_URL_MAP,
   BUILD_KEY_PARAMS,
 } from '../constants/api.url';
-import {apiKey} from '../helper/common';
 import {post} from '../helper/fetch';
 import {useAlertStore} from '../store/alert';
 import {useLoadingStore} from '../store/loading';
+import {queryAllFromRealm, ApiKeyTableName} from '../utils/RealmUtil';
 import AlertMiddle from './AlertMiddle';
 interface Props {
   buildKey: string;
@@ -20,6 +20,7 @@ interface Props {
   item: App;
 }
 const VersionMenu = (props: Props) => {
+  const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
   const {buildKey, getAppList, item} = props;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [visible, setVisible] = React.useState(false);

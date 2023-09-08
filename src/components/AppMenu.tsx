@@ -5,9 +5,9 @@ import {Menu, Divider, IconButton} from 'react-native-paper';
 import {App} from '..';
 import {theme} from '../config/theme';
 import {API_URL_MAP} from '../constants/api.url';
-import {apiKey} from '../helper/common';
 import {post} from '../helper/fetch';
 import {useAlertStore} from '../store/alert';
+import {ApiKeyTableName, queryAllFromRealm} from '../utils/RealmUtil';
 import AlertDialog from './AlertDialog';
 interface Props {
   item: App;
@@ -15,6 +15,7 @@ interface Props {
 }
 
 const AppMenu = ({item, getAppList}: Props) => {
+  const apiKey: string = queryAllFromRealm(ApiKeyTableName)[0]?.key as string;
   const {appKey, appName} = item;
   const [visible, setVisible] = React.useState(false);
   const [disabled, setDisabled] = React.useState(false);

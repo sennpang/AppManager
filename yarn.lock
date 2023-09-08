@@ -6144,10 +6144,10 @@ readline@^1.3.0:
   resolved "https://registry.npmjs.org/readline/-/readline-1.3.0.tgz"
   integrity sha512-k2d6ACCkiNYz222Fs/iNze30rRJ1iIicW7JuX/7/cozvih6YCkFZH+J6mAFDVgv0dRBaAyr4jDqC95R2y4IADg==
 
-realm@^12.0.0:
-  version "12.0.0"
-  resolved "https://registry.npmjs.org/realm/-/realm-12.0.0.tgz"
-  integrity sha512-QaFnn92eCwpWCvbnxE26N0mAHhuXRwtM23JF0tA5fKtTA+djj1+LhuT/iGJryCrGVbN8m++EOBsvWgGG8hpsuw==
+realm@^12.1.0:
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-12.1.0.tgz#ee53ca7cba7b693ef153be8df351bde03971de41"
+  integrity sha512-uX2txyh4kWmH/rorWmsS9FZ4AM4vBh2TXDbwFn6z3b9z48kaqjCLLCcSlFN47DwHbOttCPnARg/xLHbPj5rynA==
   dependencies:
     bson "^4.7.2"
     debug "^4.3.4"

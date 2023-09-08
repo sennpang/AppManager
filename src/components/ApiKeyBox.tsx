@@ -6,7 +6,7 @@ import {
   deleteFromRealm,
   getFromRealm,
 } from '../utils/RealmUtil';
-import {API_KEY_PARAMS, MY_APP_LIST_URL} from '../constants/api.url';
+import {API_KEY_PARAMS, API_URL_MAP} from '../constants/api.url';
 import {post} from '../helper/fetch';
 import {Button, List, TextInput} from 'react-native-paper';
 import {useAlertStore} from '../store/alert';
@@ -60,7 +60,7 @@ function ApiKeyBox({}) {
     }
 
     changeValue({loading: true});
-    post(MY_APP_LIST_URL, data).then(res => {
+    post(API_URL_MAP.MY_APP_LIST_URL, data).then(res => {
       if (res.code) {
         setErrorMsg(res.message);
         return false;
@@ -121,30 +121,34 @@ function ApiKeyBox({}) {
             marginTop: 15,
           }}
         />
-        <Box css={styles.apiBox}>
-          <>
-            {keyList.length ? (
-              keyList.map((item: Api) => {
-                return (
-                  <View key={item.key}>
-                    <List.Item title={item.key} description="当前 api_key" />
-                    <Button
-                      style={styles.btn}
-                      loading={loading}
-                      icon="trash-can-outline"
-                      mode="contained"
-                      buttonColor={theme.colors.error}
-                      onPress={() => handleDelete(item)}>
-                      删除当前 api_key
-                    </Button>
-                  </View>
-                );
-              })
-            ) : (
-              <></>
-            )}
-          </>
-        </Box>
+        {keyList.length ? (
+          <Box css={styles.apiBox}>
+            <>
+              {keyList.length ? (
+                keyList.map((item: Api) => {
+                  return (
+                    <View key={item.key}>
+                      <List.Item title={item.key} description="当前 api_key" />
+                      <Button
+                        style={styles.btn}
+                        loading={loading}
+                        icon="trash-can-outline"
+                        mode="contained"
+                        buttonColor={theme.colors.error}
+                        onPress={() => handleDelete(item)}>
+                        删除当前 api_key
+                      </Button>
+                    </View>
+                  );
+                })
+              ) : (
+                <></>
+              )}
+            </>
+          </Box>
+        ) : (
+          <></>
+        )}
       </Box>
     </>
   );
