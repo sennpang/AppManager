@@ -50,6 +50,14 @@ const AppDetails = ({route}: DetailScreenProps) => {
             <Text>{item.buildDescription || ' '}</Text>
           </Row>
           <VStack>
+            <Title>简介: </Title>
+            <Text>{item.buildDescription}</Text>
+          </VStack>
+          <VStack>
+            <Title>更新说明: </Title>
+            <Text>{item.buildUpdateDescription}</Text>
+          </VStack>
+          <VStack>
             <Title>合并应用: </Title>
             <Text>{item.isMerged === 1 ? '是' : '否'}</Text>
           </VStack>
