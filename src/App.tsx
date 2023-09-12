@@ -6,7 +6,7 @@ import {
   StatusBar,
   ViewStyle,
 } from 'react-native';
-import {ActivityIndicator, PaperProvider} from 'react-native-paper';
+import {Text, Dialog, PaperProvider, Portal} from 'react-native-paper';
 
 import {name as appName} from '../app.json';
 import AlertDialog from './components/AlertDialog';
@@ -20,19 +20,24 @@ import {theme} from './config/theme';
 import {RootStackParamList} from '.';
 import VersionList from './components/VersionList';
 import {useLoadingStore} from './store/loading';
-import Toast from './native/Toast';
+// import Toast from './native/Toast';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [visible, setVisible] = React.useState(true);
+
+  const hideDialog = () => setVisible(false);
 
   const safeAreaBg: ViewStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     height: '100%',
+    paddingBottom: 10,
+    paddingTop: 10,
   };
   const loading = useLoadingStore(state => state.loading);
 
   if (loading) {
-    Toast.show('加载中...', Toast.SHORT);
+    // Toast.show('加载中...', Toast.SHORT);
   }
 
   return (
@@ -43,7 +48,17 @@ function App(): JSX.Element {
           backgroundColor={safeAreaBg.backgroundColor}
         />
         <AlertDialog />
-        {loading && <ActivityIndicator animating={true} />}
+        {loading && (
+          <Portal>
+            <Dialog visible={visible} onDismiss={hideDialog}>
+              <Dialog.Content>
+                <Text style={{textAlign: 'center'}} variant="bodyMedium">
+                  加载中...
+                </Text>
+              </Dialog.Content>
+            </Dialog>
+          </Portal>
+        )}
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Home" component={BottomNav} />
