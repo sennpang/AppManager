@@ -59,9 +59,8 @@ export type RootStackParamList = {
   AppList: {time: number};
   Details: {item: App};
   VersionList: {
-    appKey: string;
+    item: App;
     time: number;
-    appName: string;
   };
 };
 

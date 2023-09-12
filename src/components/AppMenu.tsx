@@ -15,7 +15,7 @@ interface Props {
 }
 
 const AppMenu = ({item, getAppList}: Props) => {
-  const {appKey, appName} = item;
+  const {appKey} = item;
   const [visible, setVisible] = React.useState(false);
   const [disabled, setDisabled] = React.useState(false);
   const openMenu = () => setVisible(true);
@@ -86,8 +86,7 @@ const AppMenu = ({item, getAppList}: Props) => {
           onPress={() => {
             closeMenu();
             navigation.push('VersionList', {
-              appKey,
-              appName,
+              item,
               time: Date.now(),
             });
           }}

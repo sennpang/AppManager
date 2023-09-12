@@ -25,9 +25,12 @@ const rebuildList = (list: any, selectedApps: any) => {
   return tmp;
 };
 
-const dealList = (orgList: AppList, indexKey: string) => {
+const dealList = (orgList: AppList, indexKey: string, app: App) => {
   let tmp: any = {};
   orgList.map((item: App) => {
+    if (!item.buildShortcutUrl) {
+      item.buildShortcutUrl = app.buildShortcutUrl;
+    }
     tmp[item[indexKey]] = item;
   });
   return tmp;
@@ -69,7 +72,7 @@ function ListContainer({
         return;
       }
 
-      if (type === 'version' && !route?.params?.appKey) {
+      if (type === 'version' && !route?.params?.item?.appKey) {
         setTips('缺少 appKey 参数');
         return;
       }
@@ -101,7 +104,7 @@ function ListContainer({
       let data: PostData = {_api_key: apiKey};
       switch (type) {
         case 'version':
-          data.appKey = route.params.appKey;
+          data.appKey = route.params.item.appKey;
           postUrl = API_URL_MAP.APP_VERSION_LIST_URL;
           break;
         case 'app':
@@ -128,7 +131,7 @@ function ListContainer({
           }
           const indexKey =
             type === 'version' ? BUILD_KEY_PARAMS : APP_KEY_PARAMS;
-          setList(dealList(res.data.list, indexKey));
+          setList(dealList(res.data.list, indexKey, route.params.item));
           currentPageCount.current = res.data.pageCount;
         }
         setDisabled(false);
@@ -136,9 +139,9 @@ function ListContainer({
       });
     },
     [
-      apiKey,
       route.params.time,
-      route.params.appKey,
+      route.params.item,
+      apiKey,
       setLoading,
       type,
       navigation,
@@ -146,12 +149,12 @@ function ListContainer({
   );
 
   useEffect(() => {
-    if (type === 'version' && !route?.params?.appKey) {
+    if (type === 'version' && !route?.params?.item?.appKey) {
       return;
     }
 
     getAppList();
-  }, [getAppList, route?.params?.appKey, type]);
+  }, [getAppList, route?.params?.item?.appKey, type]);
 
   const deleteVersions = () => {
     let postUrl: string = '';
@@ -267,7 +270,7 @@ function ListContainer({
               textAlign="center"
               fontSize={18}
               css={{marginBottom: 1, marginTop: 10}}>
-              {route.params.appName}
+              {route.params.item.appName}
             </Title>
           )}
 
