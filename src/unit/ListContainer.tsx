@@ -25,12 +25,21 @@ const rebuildList = (list: any, selectedApps: any) => {
   return tmp;
 };
 
+const requiredFields = [
+  'buildShortcutUrl',
+  'buildDescription',
+  'buildScreenshots',
+  'isMerged',
+  'buildPassword',
+];
 const dealList = (orgList: AppList, indexKey: string, app: App) => {
   let tmp: any = {};
   orgList.map((item: App) => {
-    if (!item.buildShortcutUrl) {
-      item.buildShortcutUrl = app.buildShortcutUrl;
-    }
+    requiredFields.forEach(field => {
+      if (!item[field] && app && app[field]) {
+        item[field] = app[field];
+      }
+    });
     tmp[item[indexKey]] = item;
   });
   return tmp;
