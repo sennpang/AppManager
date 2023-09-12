@@ -20,6 +20,7 @@ import {theme} from './config/theme';
 import {RootStackParamList} from '.';
 import VersionList from './components/VersionList';
 import {useLoadingStore} from './store/loading';
+import Toast from './native/Toast';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -29,6 +30,10 @@ function App(): JSX.Element {
     height: '100%',
   };
   const loading = useLoadingStore(state => state.loading);
+
+  if (loading) {
+    Toast.show('加载中...', Toast.SHORT);
+  }
 
   return (
     <PaperProvider theme={theme}>

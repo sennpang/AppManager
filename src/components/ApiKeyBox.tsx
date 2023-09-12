@@ -61,6 +61,7 @@ function ApiKeyBox({}) {
 
     changeValue({loading: true});
     post(API_URL_MAP.MY_APP_LIST_URL, data).then(res => {
+      changeValue({loading: false});
       if (res.code) {
         setErrorMsg(res.message);
         return false;
@@ -70,7 +71,6 @@ function ApiKeyBox({}) {
           key: apiKey,
         });
         changeValue({
-          loading: false,
           keyList: queryAllFromRealm(ApiKeyTableName),
         });
         setApiKey('');
