@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {Alert} from 'react-native';
-const baseUrl = 'https://www.pgyer.com/apiv2/';
+import {PGYER_DOMAIN} from '../constants/api.url';
+const baseUrl = PGYER_DOMAIN + 'apiv2/';
 
 async function get(url = '', data = {}) {
   if (!url) {

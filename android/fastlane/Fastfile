@@ -1,0 +1,11 @@
+default_platform(:android)
+
+platform :android do
+  desc "上传android的apk包到蒲公英平台"
+  lane :UploadToPgyer do
+     gradle(task: 'clean')
+     gradle(task: "assembleRelease")
+    # ❣️蒲公英平台的 API Key 和 User Key（直接复制过来即可）
+    pgyer(api_key: ENV['API_KEY'])
+  end
+end
