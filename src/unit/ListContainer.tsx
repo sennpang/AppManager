@@ -229,6 +229,9 @@ function ListContainer({
             confirmCb: () => {
               regetApps();
             },
+            cancelCb: () => {
+              regetApps();
+            },
           });
           return;
         }

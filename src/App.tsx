@@ -49,7 +49,10 @@ function App(): JSX.Element {
         <AlertDialog />
         {loading && (
           <Portal>
-            <Dialog visible={loading} onDismiss={() => setLoading(false)}>
+            <Dialog
+              visible={loading}
+              dismissable={false}
+              onDismiss={() => setLoading(false)}>
               <Dialog.Content>
                 <Text style={{textAlign: 'center'}} variant="bodyMedium">
                   {loadingText || '加载中...'}
