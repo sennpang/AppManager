@@ -5,7 +5,7 @@ import {
   APP_KEY_PARAMS,
   BUILD_KEY_PARAMS,
 } from '../constants/api.url';
-import {IconButton} from 'react-native-paper';
+import {Button, IconButton} from 'react-native-paper';
 import {App, AppList, PostData, VersionScreenProps} from '..';
 
 import {useLoadingStore} from '../store/loading';
@@ -125,6 +125,9 @@ function ListContainer({
       data.page = currentPage.current || 1;
       setDisabled(true);
       setLoading(true);
+      setSelectApp(new Set());
+      setSelectAll(false);
+
       post(postUrl, data).then(res => {
         let code = res.code;
         if (code) {
@@ -180,7 +183,16 @@ function ListContainer({
     }
 
     setDisabled(true);
-    selectedApps.forEach((key: any) => {
+    setLoading(true, '删除中...');
+
+    const selectAppsIter = selectedApps.values();
+    let index = 0;
+    const regetApps = () => {
+      getAppList();
+      setSelectApp(new Set());
+    };
+
+    const deleteNextApp = (key = '') => {
       switch (type) {
         case 'version':
           data.buildKey = key;
@@ -192,23 +204,38 @@ function ListContainer({
         default:
           break;
       }
+
       post(postUrl, {...data}).then(res => {
+        index++;
         let code = res.code;
         if (code) {
-          setAlertInfo({msg: res.message, open: true});
+          setLoading(false);
+          setAlertInfo({
+            msg: res.message,
+            open: true,
+            confirmCb: () => {
+              regetApps();
+            },
+          });
           return false;
         }
-        setDisabled(false);
-      });
-    });
 
-    setTimeout(() => {
-      setAlertInfo({msg: '删除成功', open: true});
-      setTimeout(() => {
-        getAppList();
-        setSelectApp(new Set());
-      }, 1000);
-    }, 0);
+        setDisabled(false);
+        if (index === selectedApps.size) {
+          setLoading(false);
+          setAlertInfo({
+            msg: '删除成功',
+            open: true,
+            confirmCb: () => {
+              regetApps();
+            },
+          });
+          return;
+        }
+        deleteNextApp(selectAppsIter.next().value);
+      });
+    };
+    deleteNextApp(selectAppsIter.next().value);
   };
 
   const handleDeleteVersions = () => {
@@ -283,13 +310,16 @@ function ListContainer({
             </Title>
           )}
 
-          <DeleteAppBtn
-            selectedApps={selectedApps}
-            disabled={disabledIcon}
-            selectAll={selectAll}
-            changeSelectAll={changeSelectAll}
-            handleDelete={handleDeleteVersions}
-          />
+          <Row justifyContent="space-between">
+            <DeleteAppBtn
+              selectedApps={selectedApps}
+              disabled={disabledIcon}
+              selectAll={selectAll}
+              changeSelectAll={changeSelectAll}
+              handleDelete={handleDeleteVersions}
+            />
+            <Button onPress={() => getAppList()}>刷新</Button>
+          </Row>
 
           {type === 'version' && <VersionScrollView {...newProps} />}
           {type === 'app' && <AppScrollView {...newProps} />}

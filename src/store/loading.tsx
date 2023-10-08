@@ -2,10 +2,12 @@ import {create} from 'zustand';
 
 export interface LoadingState {
   loading: boolean;
-  setStat?: (loading: boolean) => void;
+  text: string;
+  setStat?: (loading: boolean, text?: string) => void;
 }
 
 export const useLoadingStore = create<LoadingState>()(set => ({
   loading: false,
-  setStat: (loading: boolean) => set({loading}),
+  text: '',
+  setStat: (loading: boolean, text) => set({loading, text}),
 }));

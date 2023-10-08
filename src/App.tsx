@@ -24,9 +24,6 @@ import {useLoadingStore} from './store/loading';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const [visible, setVisible] = React.useState(true);
-
-  const hideDialog = () => setVisible(false);
 
   const safeAreaBg: ViewStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -35,6 +32,8 @@ function App(): JSX.Element {
     paddingTop: 10,
   };
   const loading = useLoadingStore(state => state.loading);
+  const loadingText = useLoadingStore(state => state.text);
+  const setLoading = useLoadingStore(state => state.setStat);
 
   if (loading) {
     // Toast.show('加载中...', Toast.SHORT);
@@ -50,10 +49,10 @@ function App(): JSX.Element {
         <AlertDialog />
         {loading && (
           <Portal>
-            <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog visible={loading} onDismiss={() => setLoading(false)}>
               <Dialog.Content>
                 <Text style={{textAlign: 'center'}} variant="bodyMedium">
-                  加载中...
+                  {loadingText || '加载中...'}
                 </Text>
               </Dialog.Content>
             </Dialog>
