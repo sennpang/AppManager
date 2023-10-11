@@ -1,4 +1,4 @@
-package com.appmanager;
+package com.pgyer.apps;
 
 import android.widget.Toast;
 

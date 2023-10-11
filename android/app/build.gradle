@@ -76,9 +76,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.appmanager"
+    namespace "com.pgyer.apps"
     defaultConfig {
-        applicationId "com.appmanager"
+        applicationId "com.pgyer.apps"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2

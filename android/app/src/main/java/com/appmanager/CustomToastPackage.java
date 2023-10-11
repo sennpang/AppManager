@@ -1,4 +1,4 @@
-package com.appmanager;
+package com.pgyer.apps;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
