@@ -48,19 +48,26 @@ const AppScrollView = ({
                   />
                   <View style={styles.appAvatar}>
                     <Avatar.Image
-                      size={50}
+                      size={40}
                       source={{uri: `${PGYER_ICON_URL}/${item.buildIcon}`}}
                     />
                     <Avatar.Icon
-                      size={20}
+                      size={15}
                       icon={buildType.toLowerCase()}
                       style={styles.type}
                     />
                   </View>
                   <View style={{marginLeft: 10}}>
-                    <Row css={{marginBottom: 5}} alignItems="center">
-                      <Title marginBottom={0}>{item.buildName}</Title>
-                      <Text style={{marginLeft: 5}}>{item.buildVersion}</Text>
+                    <Row
+                      css={{marginBottom: 5}}
+                      alignItems="center"
+                      alignContent="center">
+                      <Title fontSize={14} marginBottom={0}>
+                        {item.buildName.substring(0, 10)}
+                      </Title>
+                      <Text style={{marginLeft: 5}}>
+                        {item.buildVersion.substring(0, 8)}
+                      </Text>
                     </Row>
                     <Text>{item.buildCreated}</Text>
                   </View>
