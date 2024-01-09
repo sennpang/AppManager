@@ -1,0 +1,50 @@
+name: GitHub Actions Build and Deploy Apk
+on:
+  push:
+    branches:
+      - main 
+    paths-ignore:
+      - .github/workflows
+      - README.md
+jobs:
+  install-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install npm dependencies
+        run: |
+          npm install
+  build-android:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Build Android Release
+        run: |
+          cd android && ./gradlew assembleRelease
+
+      - name: Upload To Pgyer 
+        uses: PGYER/pgyer-upload-app-action@v1.3
+        with:
+          _api_key: ${{ secrets.PGYER_API_KEY }}         
+          appFilePath: ${{ github.workspace }}/android/app/build/outputs/apk/release/app-release.apk
+          buildUpdateDescription: ${{ github.event.head_commit.message }}
+
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: app-release.apk
+      #     path: android/app/build/outputs/apk/release/
+
+      # - name: release apk
+      #   uses: "marvinpinto/action-automatic-releases@latest"
+      #   with:
+      #     repo_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     automatic_release_tag: "Production"
+      #     prerelease: true
+      #     title: "Development Build"
+      #     files: |
+      #       android/app/build/outputs/apk/release/app-release.apk

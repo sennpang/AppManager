@@ -1,0 +1,37 @@
+name: Build Android .apk
+
+run-name: "Building the .apk with the tag triggered by @${{ github.actor }}"
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  install-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install npm dependencies
+        run: |
+          npm install
+  build-android:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Build Android Release
+        run: |
+          cd android && ./gradlew assembleRelease
+      - name: Create Release and Uploading Files
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            android/app/build/outputs/apk/release/app-release.apk
