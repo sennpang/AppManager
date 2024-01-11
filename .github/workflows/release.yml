@@ -23,12 +23,32 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v4
+
       - name: Install npm dependencies
         run: |
           npm install
-      - name: Build Android Release
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.ANDROID_KEY_STORE_BASE64 }}
+          ANDROID_KEY_STORE_PATH: ${{ secrets.ANDROID_KEY_STORE_PATH }}
+ 
         run: |
-          cd android && ./gradlew assembleRelease
+          cd android 
+          echo $ENCODED_STRING > keystore-b64.txt
+          base64 -d keystore-b64.txt > $ANDROID_KEY_STORE_PATH
+           
+      - name: Build Release apk
+        env:
+           ANDROID_KEY_STORE_PATH: ${{ secrets.ANDROID_KEY_STORE_PATH }}
+           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+           ANDROID_KEY_STORE_PASSWORD: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+        run: |
+          cd android 
+          mv $ANDROID_KEY_STORE_PATH app/
+          ./gradlew assembleRelease
+
       - name: Create Release and Uploading Files
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
