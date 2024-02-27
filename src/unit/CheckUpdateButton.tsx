@@ -30,7 +30,9 @@ const CheckUpdateButton = () => {
 
   const check = async () => {
     // setDisable(true)
-    setLoading && setLoading(true, '检查更新...');
+    if (!setLoading) return;
+
+    setLoading(true, '检查更新...');
 
     let version = DeviceInfo.getVersion();
     let downloadUrl = '';
@@ -44,14 +46,19 @@ const CheckUpdateButton = () => {
     let responseData = response.data
     let buildHaveNewVersion = responseData?.buildHaveNewVersion
     if (response.code) {
-      setLoading && setLoading(true, response.message);
+      setLoading(true, response.message);
       return 
     }
 
     if (!buildHaveNewVersion) {
-      setLoading && setLoading(true, '当前已经是最新版本了！');
+      setLoading(true, '当前已经是最新版本了！');
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
       return
     }
+
+    if (!responseData) return
 
     if (response.code === 0 && buildHaveNewVersion) {
       downloadUrl = responseData?.downloadURL
@@ -59,7 +66,7 @@ const CheckUpdateButton = () => {
     if (!downloadUrl) return
 
     let filename = `${responseData.buildName}_${responseData.buildVersion}.apk`;
-    setLoading && setLoading(false)
+    setLoading(false)
     setAlertInfo({
       ...alertInfo,
       confirmCb: () => {
@@ -119,8 +126,9 @@ const CheckUpdateButton = () => {
   };
 
   useEffect(()=> {
+    if (!setLoading) return
     check()
-  },[])
+  },[setLoading])
 
   return <></>;
 };
