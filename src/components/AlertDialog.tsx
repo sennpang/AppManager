@@ -19,7 +19,7 @@ const AlertDialog = () => {
     <View>
       <Portal>
         <Dialog
-          dismissable={false}
+          dismissable={alertInfo.dismissable}
           visible={!!open}
           onDismiss={handleClose}
           theme={{

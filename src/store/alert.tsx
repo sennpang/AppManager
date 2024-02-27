@@ -5,6 +5,7 @@ interface Alert {
   msg?: string;
   open?: boolean;
   confirm?: string;
+  dismissable?:boolean;
   confirmCb?: (p?: any) => void;
   cancelCb?: (p?: any) => void;
 }
@@ -14,6 +15,6 @@ export interface AlertState {
 }
 
 export const useAlertStore = create<AlertState>()(set => ({
-  info: {open: false, title: '', msg: ''},
+  info: {open: false, title: '', msg: '', dismissable:true},
   setInfo: (info: Alert) => set({info}),
 }));

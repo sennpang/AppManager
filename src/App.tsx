@@ -20,6 +20,7 @@ import {theme} from './config/theme';
 import {RootStackParamList} from '.';
 import VersionList from './components/VersionList';
 import {useLoadingStore} from './store/loading';
+import CheckUpdateButton from './unit/CheckUpdateButton';
 // import Toast from './native/Toast';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
@@ -46,12 +47,13 @@ function App(): JSX.Element {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={safeAreaBg.backgroundColor}
         />
+        <CheckUpdateButton/>
         <AlertDialog />
-        {loading && (
+        {loading && setLoading && (
           <Portal>
             <Dialog
               visible={loading}
-              dismissable={false}
+              dismissable={true}
               onDismiss={() => setLoading(false)}>
               <Dialog.Content>
                 <Text style={{textAlign: 'center'}} variant="bodyMedium">
