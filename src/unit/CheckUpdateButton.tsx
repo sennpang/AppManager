@@ -80,13 +80,15 @@ const CheckUpdateButton = () => {
   }
 
   const Update = async (filename: string, downloadUrl: string) => {
+    if (!setLoading) return;
     let apkFilePath = RNFS.ExternalDirectoryPath + `/${filename}`
     let apkMime = 'application/vnd.android.package-archive'
 
-    setLoading && setLoading(true, '更新中, 请稍等...');
+    setLoading(true, '更新中, 请稍等...');
 
     let finalUrl = await getRedirectLocation(downloadUrl)
     if (!finalUrl) {
+      setLoading(false)
       setAlertInfo({
         ...alertInfo,
         msg: '更新失败, 没有获取到下载链接!!!',
@@ -110,6 +112,7 @@ const CheckUpdateButton = () => {
       finalUrl, //apk下载地址
     )
 
+    setLoading(false)
     setAlertInfo({
       ...alertInfo,
       msg: '正在打开安装包...',
