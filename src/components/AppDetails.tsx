@@ -13,6 +13,7 @@ import Row from './layout/Row';
 import {DetailScreenProps} from '..';
 import VStack from './layout/VStack';
 import Title from './Title';
+import {formatBytes} from '../helper/common';
 const AppDetails = ({route}: DetailScreenProps) => {
   const {item} = route.params;
   let screenshots: string[] = [];
@@ -39,7 +40,7 @@ const AppDetails = ({route}: DetailScreenProps) => {
           </VStack>
           <VStack>
             <Title>大小: </Title>
-            <Text>{item.buildFileSize}</Text>
+            <Text>{formatBytes(parseInt(item.buildFileSize, 10))}</Text>
           </VStack>
           <VStack>
             <Title>包名: </Title>
